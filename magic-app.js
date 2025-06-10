@@ -1,43 +1,33 @@
+import { Magic } from 'magic-sdk';
+import { ethers } from 'ethers';
 
-const magic = new Magic("pk_live_2E6442CA7F379245", {
-  network: {
-    rpcUrl: "https://rpc-mumbai.maticvigil.com",
-    chainId: 80001
-  }
+// Replace with your real hook
+const WEBHOOK_URL = 'https://hook.us1.make.com/4sjygnjo5c3jw6ulnqd71nhso2zrbkno';
+
+const magic = new Magic('pk_live_2E6442CA7F379245', {
+  network: 'mumbai', // or 'mainnet' if you switch networks
 });
 
-let provider, signer, contract;
-const tokenAddress = "0x2f65028C14c3A792e3A74Fb18A6E09E29c37Ee48";
-const abi = [
-  "function balanceOf(address) view returns (uint256)",
-  "function decimals() view returns (uint8)",
-  "function safeMint(address,uint256) external"
-];
+async function handleLoginWithEmail(email) {
+  try {
+    await magic.auth.loginWithEmailOTP({ email });
 
-async function login() {
-  const email = document.getElementById("email").value;
-  await magic.auth.loginWithEmailOTP({ email });
+    const provider = new ethers.providers.Web3Provider(magic.rpcProvider);
+    const signer = provider.getSigner();
+    const walletAddress = await signer.getAddress();
 
-  provider = new ethers.providers.Web3Provider(magic.rpcProvider);
-  signer = provider.getSigner();
-  contract = new ethers.Contract(tokenAddress, abi, signer);
+    // 👇 Send to Make webhook
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        wallet: walletAddress,
+      }),
+    });
 
-  const address = await signer.getAddress();
-  document.getElementById("wallet").innerText = address;
-
-  const balance = await contract.balanceOf(address);
-  const decimals = await contract.decimals();
-  document.getElementById("balance").innerText = (balance / 10 ** decimals).toLocaleString();
-}
-
-async function safeMint() {
-  const addr = document.getElementById("mintAddress").value;
-  const amt = document.getElementById("mintAmount").value;
-  if (!addr || !amt) return alert("Please fill in both fields");
-
-  const decimals = await contract.decimals();
-  const amount = ethers.utils.parseUnits(amt, decimals);
-  const tx = await contract.safeMint(addr, amount);
-  await tx.wait();
-  alert("Minted successfully!");
+    alert(`Logged in as ${walletAddress}`);
+  } catch (error) {
+    console.error('Login failed:', error);
+  }
 }
