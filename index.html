@@ -1,35 +1,18 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Real Golf Token - Magic Login</title>
-  <link rel="icon" href="logo.png">
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/magic-sdk/dist/magic.js"></script>
-  <style>
-    body { font-family: sans-serif; text-align: center; background: #007b33; color: white; margin-top: 2em; }
-    img { width: 100px; margin-bottom: 1em; }
-    input, button { margin: 0.5em; padding: 0.5em; }
-    .card { background: #fff; color: #000; border-radius: 12px; padding: 2em; max-width: 500px; margin: auto; }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Magic Login</title>
 </head>
 <body>
-  <img src="logo.png" alt="Real Golf Token Logo">
-  <h1>Real Golf Token (RGT)</h1>
-  <div class="card">
-    <p><strong>Wallet:</strong> <span id="wallet">Not connected</span></p>
-    <p><strong>RGT Balance:</strong> <span id="balance">0</span></p>
+  <h1>Real Golf Token Login</h1>
 
-    <h3>Login with Email</h3>
-    <input type="email" id="email" placeholder="you@example.com">
-    <button onclick="login()">Login</button>
+  <input type="email" id="email" placeholder="Enter your email" />
+  <button onclick="login()">Login</button>
+  <button onclick="logout()">Logout</button>
 
-    <h3>Mint Tokens</h3>
-    <input type="text" id="mintAddress" placeholder="Recipient Address">
-    <input type="number" id="mintAmount" placeholder="Amount">
-    <button onclick="safeMint()">Mint</button>
-  </div>
+  <p id="wallet-status">Wallet: Not connected</p>
 
-  <script src="magic-app.js"></script>
+  <script type="module" src="./magic-app.js"></script>
 </body>
 </html>
